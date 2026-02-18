@@ -15,32 +15,33 @@ export default function Dashboard() {
 
   // ✅ 1️⃣ Get User + Initial Bookmarks
   useEffect(() => {
-    const init = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    if (!session) {
+      window.location.href = "/";
+      return;
+    }
 
-      if (!user) {
-        window.location.href = "/";
-        return;
-      }
+    setUser(session.user);
 
-      setUser(user);
+    const { data, error } = await supabase
+      .from("bookmarks")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-      const { data, error } = await supabase
-        .from("bookmarks")
-        .select("*")
-        .order("created_at", { ascending: false });
+    if (!error) {
+      setBookmarks(data || []);
+    }
 
-      if (!error) {
-        setBookmarks(data || []);
-      }
+    setLoading(false);
+  });
 
-      setLoading(false);
-    };
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
 
-    init();
-  }, []);
 
   // ✅ 2️⃣ Realtime Subscription
   useEffect(() => {
