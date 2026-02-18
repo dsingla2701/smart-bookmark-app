@@ -1,4 +1,9 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+}
 
 :root {
   --background: #ffffff;
