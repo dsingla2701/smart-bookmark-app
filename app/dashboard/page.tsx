@@ -15,9 +15,17 @@ export default function Dashboard() {
 
   // ✅ 1️⃣ Get User + Initial Bookmarks
   useEffect(() => {
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange(async (_event, session) => {
+  const checkSession = async () => {
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error(error);
+      setLoading(false);
+      return;
+    }
+
+    const session = data.session;
+
     if (!session) {
       window.location.href = "/";
       return;
@@ -25,22 +33,19 @@ export default function Dashboard() {
 
     setUser(session.user);
 
-    const { data, error } = await supabase
+    const { data: bookmarksData } = await supabase
       .from("bookmarks")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (!error) {
-      setBookmarks(data || []);
-    }
-
+    setBookmarks(bookmarksData || []);
     setLoading(false);
-  });
-
-  return () => {
-    subscription.unsubscribe();
   };
+
+  checkSession();
 }, []);
+
+
 
 
   // ✅ 2️⃣ Realtime Subscription

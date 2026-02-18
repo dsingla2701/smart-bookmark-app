@@ -77,8 +77,8 @@ Local Development Setup:
    npm install
 
 3. Create a .env.local file:
-   NEXT_PUBLIC_SUPABASE_URL: https://pfwgomuvrpaxzaswzutv.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmd2dvbXV2cnBheHphc3d6dXR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNTAxMTIsImV4cCI6MjA4NjgyNjExMn0.KZYA3FDFXP43qkaa6y74iusjKyL36g7x0AMQFJqkfUA
+   NEXT_PUBLIC_SUPABASE_URL
+   NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 4. Start development server:
    npm run dev
