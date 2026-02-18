@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Bookmark App
 
-## Getting Started
+Smart Bookmark App is a real-time bookmark manager built using Next.js (App Router) and Supabase. It allows users to sign in with Google, save private bookmarks, edit them inline, and see changes reflected instantly across multiple tabs.
 
-First, run the development server:
+Live URL:
+https://smart-bookmark-app-gamma-seven.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Features:
+Users can sign in using Google OAuth (Supabase Auth).
+Each user’s bookmarks are private using Row Level Security (RLS).
+Users can add bookmarks with a title and URL.
+URLs are automatically normalized (https:// added if missing).
+Users can edit bookmarks inline.
+Users can delete bookmarks.
+Copy-to-clipboard functionality is available.
+Favicon preview is displayed for each bookmark.
+Real-time updates work for add, edit, and delete across multiple tabs.
+The UI uses a premium dark theme inspired by Notion and Linear.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Tech Stack:
+Next.js 14 (App Router)
+TypeScript
+Tailwind CSS
+Framer Motion
+React Hot Toast
+Supabase (PostgreSQL, Auth, Realtime)
+Vercel (Deployment)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Database Schema:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+create table bookmarks (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid references auth.users not null,
+  title text not null,
+  url text not null,
+  created_at timestamp with time zone default now()
+);
 
-## Learn More
+Row Level Security is enabled so users can only access their own bookmarks. Replica identity is set to FULL to ensure realtime DELETE events work properly.
 
-To learn more about Next.js, take a look at the following resources:
+Local Setup:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository:
+   git clone https://github.com/dsingla2701/smart-bookmark-app.git
+   cd smart-bookmark-app
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Install dependencies:
+   npm install
 
-## Deploy on Vercel
+3. Create a .env.local file with:
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Run locally:
+   npm run dev
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Problems Faced:
+
+During production deployment, OAuth initially redirected back to the login page due to incorrect Supabase Site URL configuration. This was fixed by properly setting the Vercel domain in Supabase Authentication settings and clearing browser storage.
+
+Realtime delete did not work initially because replica identity was not set to FULL. This was resolved using:
+   alter table bookmarks replica identity full;
+
+This project demonstrates authentication handling, secure database policies, realtime systems integration, production debugging, and UI/UX refinement in a full-stack SaaS-style application.
